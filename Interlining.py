@@ -4,7 +4,7 @@ import openpyxl
 import os
 
 # Load data from Excel file
-file_path = "D:\\Interlining Data.xlsx"
+file_path = "D://Interlining Data.xlsx"
 
 @st.cache_data
 def load_data():
@@ -142,7 +142,7 @@ with st.form("data_retrieval"):
             filters["Type of construction"] = type_of_construction_retrieve
 
         df = load_data()  # Load data after filtering
-
+        
         filtered_df = df
         for key, value in filters.items():
             if value:
@@ -157,6 +157,11 @@ with st.form("data_retrieval"):
                     st.error(f"KeyError: {ke}")
                 except Exception as e:
                     st.error(f"Unexpected error: {e}")
+
+        if filtered_df.empty:
+            st.error("No matching records found.")
+        else:
+            st.write(filtered_df)
 
             if filtered_df.empty:
                 st.error("No matching records found.")
