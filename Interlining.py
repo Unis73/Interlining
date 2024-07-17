@@ -112,17 +112,17 @@ value = indent_number  # Value to filter
 st.header("Data Retrieval")
 with st.form("data_retrieval"):
     indent_number_retrieve = st.text_input("Indent Number")
-    stage = st.selectbox("Stage", ["Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
+    stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
                  "Quotation", "Sealer", "Size Set", "SMS"])
     customer_retrieve = st.text_input("Customer")
     style_retrieve = st.text_input("Style")
     wash_retrieve = st.text_input("Wash")
     content_retrieve = st.text_input("Content")
     gsm_retrieve = st.text_input("GSM")
-    structure_retrieve = st.selectbox("Structure", ["Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
+    structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
                                                   "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
                                                   "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
-    type_of_construction_retrieve = st.selectbox("Type of construction", ["Woven", "Knit"])
+    type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 
     submitted = st.form_submit_button("Retrieve")
 
