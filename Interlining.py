@@ -4,7 +4,7 @@ import openpyxl
 import os
 
 # Load data from Excel file
-file_path = "D:\Interlining Data.xlsx"
+file_path = "Interlining Data.xlsx"
 
 @st.cache_data
 def load_data():
