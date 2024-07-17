@@ -147,9 +147,20 @@ with st.form("data_retrieval"):
 
         df = load_data()  # Load data after filtering
 
-        st.write("Filtered Data:", df)
-        filtered_df = pd.DataFrame(...)
+        filtered_df = df.copy()
         for key, value in filters.items():
+            if value:
+                try:
+                    if key in ['Indent Number', 'GSM']:  # Check if key is in the list
+                        filtered_df = filtered_df.loc[filtered_df[key] == int(value)]
+                    else:
+                        filtered_df = filtered_df.loc[filtered_df[key] == value]
+                except ValueError as ve:
+                    st.error(f"ValueError: {ve}")
+                except KeyError as ke:
+                    st.error(f"KeyError: {ke}")
+                except Exception as e:
+                    st.error(f"Unexpected error: {e}")
 
             if filtered_df.empty:
                 st.error("No matching records found.")
