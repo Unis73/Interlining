@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Entry and Retrieval Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #4CAF50;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Data Entry and Retrieval Dashboard</h1>
+
+    <h2>Data Entry</h2>
+    <form id="data-entry-form">
+        <div class="form-group">
+            <label for="indent_number">Indent Number</label>
+            <input type="number" id="indent_number" name="indent_number" min="9999">
+        </div>
+        <div class="form-group">
+            <label for="stage">Stage</label>
+            <input type="text" id="stage" name="stage">
+        </div>
+        <div class="form-group">
+            <label for="customer">Customer</label>
+            <input type="text" id="customer" name="customer">
+        </div>
+        <div class="form-group">
+            <label for="style">Style</label>
+            <input type="text" id="style" name="style">
+        </div>
+        <div class="form-group">
+            <label for="wash">Wash</label>
+            <input type="text" id="wash" name="wash">
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <input type="text" id="content" name="content">
+        </div>
+        <div class="form-group">
+            <label for="gsm">GSM</label>
+            <input type="number" id="gsm" name="gsm" min="9">
+        </div>
+        <div class="form-group">
+            <label for="structure">Structure</label>
+            <input type="text" id="structure" name="structure">
+        </div>
+        <div class="form-group">
+            <label for="count_cons">Count_Cons</label>
+            <input type="text" id="count_cons" name="count_cons">
+        </div>
+        <div class="form-group">
+            <label for="type_of_construction">Type of construction</label>
+            <input type="text" id="type_of_construction" name="type_of_construction">
+        </div>
+        <div class="form-group">
+            <label for="collar_skin">Collar Skin</label>
+            <input type="text" id="collar_skin" name="collar_skin">
+        </div>
+        <div class="form-group">
+            <label for="collar_patch">Collar Patch</label>
+            <input type="text" id="collar_patch" name="collar_patch">
+        </div>
+        <div class="form-group">
+            <label for="inner_collar">Inner Collar</label>
+            <input type="text" id="inner_collar" name="inner_collar">
+        </div>
+        <div class="form-group">
+            <label for="inner_nb">Inner NB</label>
+            <input type="text" id="inner_nb" name="inner_nb">
+        </div>
+        <div class="form-group">
+            <label for="nb_patch">NB Patch</label>
+            <input type="text" id="nb_patch" name="nb_patch">
+        </div>
+        <div class="form-group">
+            <label for="outer_nb">Outer NB</label>
+            <input type="text" id="outer_nb" name="outer_nb">
+        </div>
+        <div class="form-group">
+            <label for="cf_t_p">CF T P</label>
+            <input type="text" id="cf_t_p" name="cf_t_p">
+        </div>
+        <div class="form-group">
+            <label for="cf_d_p">CF D P</label>
+            <input type="text" id="cf_d_p" name="cf_d_p">
+        </div>
+        <div class="form-group">
+            <label for="top_cuff">Top Cuff</label>
+            <input type="text" id="top_cuff" name="top_cuff">
+        </div>
+        <div class="form-group">
+            <label for="in_cuff">In cuff</label>
+            <input type="text" id="in_cuff" name="in_cuff">
+        </div>
+        <div class="form-group">
+            <label for="top_sp">Top SP</label>
+            <input type="text" id="top_sp" name="top_sp">
+        </div>
+        <div class="form-group">
+            <label for="inner_sp">Inner SP</label>
+            <input type="text" id="inner_sp" name="inner_sp">
+        </div>
+        <div class="form-group">
+            <label for="label_patch">Label Patch</label>
+            <input type="text" id="label_patch" name="label_patch">
+        </div>
+        <div class="form-group">
+            <label for="moon_patch">Moon Patch</label>
+            <input type="text" id="moon_patch" name="moon_patch">
+        </div>
+        <div class="form-group">
+            <label for="welt">Welt</label>
+            <input type="text" id="welt" name="welt">
+        </div>
+        <div class="form-group">
+            <label for="flap">Flap</label>
+            <input type="text" id="flap" name="flap">
+        </div>
+        <button type="submit" class="btn">Save Data</button>
+    </form>
+
+    <h2>Data Retrieval</h2>
+    <form id="data-retrieval-form">
+        <div class="form-group">
+            <label for="indent_number_retrieve">Indent Number</label>
+            <input type="text" id="indent_number_retrieve" name="indent_number_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="stage_retrieve">Stage</label>
+            <select id="stage_retrieve" name="stage_retrieve">
+                <option value="Design">Design</option>
+                <option value="Development">Development</option>
+                <option value="FIT">FIT</option>
+                <option value="GFE">GFE</option>
+                <option value="GPT">GPT</option>
+                <option value="GPT,PP">GPT,PP</option>
+                <option value="Mock">Mock</option>
+                <option value="Offer">Offer</option>
+                <option value="Photoshoot">Photoshoot</option>
+                <option value="Pre-Production">Pre-Production</option>
+                <option value="Proto">Proto</option>
+                <option value="Quotation">Quotation</option>
+                <option value="Sealer">Sealer</option>
+                <option value="Size Set">Size Set</option>
+                <option value="SMS">SMS</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="customer_retrieve">Customer</label>
+            <input type="text" id="customer_retrieve" name="customer_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="style_retrieve">Style</label>
+            <input type="text" id="style_retrieve" name="style_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="wash_retrieve">Wash</label>
+            <input type="text" id="wash_retrieve" name="wash_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="content_retrieve">Content</label>
+            <input type="text" id="content_retrieve" name="content_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="gsm_retrieve">GSM</label>
+            <input type="text" id="gsm_retrieve" name="gsm_retrieve">
+        </div>
+        <div class="form-group">
+            <label for="structure_retrieve">Structure</label>
+            <select id="structure_retrieve" name="structure_retrieve">
+                <option value="Corduroy">Corduroy</option>
+                <option value="Dobby">Dobby</option>
+                <option value="Denim">Denim</option>
+                <option value="French Terry">French Terry</option>
+                <option value="Herringbone">Herringbone</option>
+                <option value="Interlock (Knit)">Interlock (Knit)</option>
+                <option value="Jersey">Jersey</option>
+                <option value="Jacquard">Jacquard</option>
+                <option value="Knit">Knit</option>
+                <option value="Matt">Matt</option>
+                <option value="Miss Jersey Knit">Miss Jersey Knit</option>
+                <option value="Oxford">Oxford</option>
+                <option value="Oxford Twill">Oxford Twill</option>
+                <option value="Pique">Pique</option>
+                <option value="Plain">Plain</option>
+                <option value="Poplin">Poplin</option>
+                <option value="Satin">Satin</option>
+                <option value="Seersucker">Seersucker</option>
+                <option value="Single Jersey">Single Jersey</option>
+                <option value="Twill">Twill</option>
+                <option value="Twill Knit">Twill Knit</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="type_of_construction_retrieve">Type of construction</label>
+            <select id="type_of_construction_retrieve" name="type_of_construction_retrieve">
+                <option value="Woven">Woven</option>
+                <option value="Knit">Knit</option>
+            </select>
+        </div>
+        <button type="submit" class="btn">Retrieve</button>
+    </form>
+
+    <div id="retrieved-data">
+        <!-- This is where the retrieved data will be displayed -->
+    </div>
+</div>
+
+<script>
+    document.getElementById('data-entry-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Add code to handle data entry form submission
+    });
+
+    document.getElementById('data-retrieval-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // Add code to handle data retrieval form submission
+    });
+</script>
+
+</body>
+</html>
