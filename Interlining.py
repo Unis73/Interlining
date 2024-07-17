@@ -3,9 +3,6 @@ import pandas as pd
 import openpyxl 
 import os
 
-# Display openpyxl version
-st.write("Openpyxl version:", openpyxl.__version__)
-
 # Load data from Excel file
 file_path = "D:\\Interlining Data.xlsx"
 
@@ -32,7 +29,7 @@ def save_data(new_data):
         df = load_data()  # Load existing data
         df.columns = df.columns.str.strip()  # Trim spaces from column names
         # Concatenate the new data with the existing DataFrame
-        df = pd.concat([df, new_data], ignore_index=True)
+        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
         df.to_excel(file_path, index=False)  # Save to Excel
         st.success("Data saved successfully!")
     except PermissionError:
@@ -54,11 +51,11 @@ style = st.text_input("Style")
 wash = st.text_input("Wash")
 content = st.text_input("Content")
 gsm = st.number_input("GSM", min_value=9)
-structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
+structure = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
                                                   "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
                                                   "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
 count_cons = st.text_input("Count_Cons")
-type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
+type_of_construction = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 collar_skin = st.text_input("Collar Skin")
 collar_patch = st.text_input("Collar Patch")
 inner_collar = st.text_input("Inner Collar")
@@ -111,7 +108,7 @@ if st.button("Save Data"):
 st.header("Data Retrieval")
 with st.form("data_retrieval"):
     indent_number_retrieve = st.text_input("Indent Number")
-    stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
+    stage_retrieve = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
                  "Quotation", "Sealer", "Size Set", "SMS"])
     customer_retrieve = st.text_input("Customer")
     style_retrieve = st.text_input("Style")
