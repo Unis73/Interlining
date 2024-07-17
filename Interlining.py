@@ -107,10 +107,6 @@ if st.button("Save Data"):
     }
     save_data(new_data)
 
-# Filter the data
-key = 'Indent Number'  # Example key for filtering
-value = indent_number  # Value to filter
-
 # Data Retrieval section
 st.header("Data Retrieval")
 with st.form("data_retrieval"):
@@ -150,7 +146,7 @@ with st.form("data_retrieval"):
 
         df = load_data()  # Load data after filtering
 
-        filtered_df = df.copy()
+        filtered_df = df
         for key, value in filters.items():
             if value:
                 try:
@@ -171,5 +167,4 @@ with st.form("data_retrieval"):
             st.write(filtered_df)
 
 if __name__ == "__main__":
-
     pass
