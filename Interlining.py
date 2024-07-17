@@ -8,7 +8,6 @@ st.write("Openpyxl version:", openpyxl.__version__)
 
 # Load data from Excel file
 file_path = "D:\\Interlining Data.xlsx"
-os.chmod(file_path, 0o666)  # Set permissions to read/write for all users
 
 @st.cache_data
 def load_data():
