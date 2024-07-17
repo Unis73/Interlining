@@ -23,6 +23,7 @@ def load_data():
     return df  # Return the DataFrame, not just "Data Loaded"
 
 # Function to save new data entry to the Excel file
+@st.cache_data
 def save_data(new_data):
     try:
         df = load_data()  # Load existing data
@@ -161,6 +162,11 @@ with st.form("data_retrieval"):
             st.error("No matching records found.")
         else:
             st.write(filtered_df)
+
+            if filtered_df.empty:
+                st.error("No matching records found.")
+            else:
+                st.write(filtered_df)
 
 if __name__ == "__main__":
     pass
