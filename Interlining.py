@@ -47,15 +47,18 @@ st.title("Data Entry and Retrieval Dashboard")
 st.title("Data Entry")
 
 indent_number = st.number_input("Indent Number", min_value=9999)
-stage = st.text_input("Stage")
+stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
+                 "Quotation", "Sealer", "Size Set", "SMS"])
 customer = st.text_input("Customer")
 style = st.text_input("Style")
 wash = st.text_input("Wash")
 content = st.text_input("Content")
 gsm = st.number_input("GSM", min_value=9)
-structure = st.text_input("Structure")
+structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
+                                                  "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
+                                                  "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
 count_cons = st.text_input("Count_Cons")
-type_of_construction = st.text_input("Type of construction")
+type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 collar_skin = st.text_input("Collar Skin")
 collar_patch = st.text_input("Collar Patch")
 inner_collar = st.text_input("Inner Collar")
