@@ -165,8 +165,8 @@ with st.form("data_retrieval"):
 
             if filtered_df.empty:
                 st.error("No matching records found.")
-        else:
-            st.write(filtered_df)
+            else:
+                st.write(filtered_df)
 
 if __name__ == "__main__":
     pass
