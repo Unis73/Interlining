@@ -7,7 +7,7 @@ import os
 file_path = "Interlining_Data.xlsx"
 
 @st.cache_data
-def load_data():
+def load_data(file_path):
     try:
         df = pd.read_excel(file_path)
         df.columns = df.columns.str.strip()  # Trim spaces from column names
@@ -24,9 +24,9 @@ def load_data():
 
 # Function to save new data entry to the Excel file
 @st.cache_data
-def save_data(new_data):
+def save_data(new_data, file_path):
     try:
-        df = load_data()  # Load existing data
+        df = load_data(file_path)  # Load existing data
         df.columns = df.columns.str.strip()  # Trim spaces from column names
         # Concatenate the new data with the existing DataFrame
         df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
@@ -102,7 +102,7 @@ if st.button("Save Data"):
         'Welt': welt,
         'Flap': flap
     }
-    save_data(new_data)
+    save_data(new_data, file_path)
 
 # Data Retrieval section
 st.header("Data Retrieval")
@@ -141,7 +141,7 @@ with st.form("data_retrieval"):
         if type_of_construction_retrieve:
             filters["Type of construction"] = type_of_construction_retrieve
 
-        df = load_data()  # Load data after filtering
+        df = load_data(file_path)  # Load data after filtering
         
         filtered_df = df
         for key, value in filters.items():
@@ -162,11 +162,6 @@ with st.form("data_retrieval"):
             st.error("No matching records found.")
         else:
             st.write(filtered_df)
-
-            if filtered_df.empty:
-                st.error("No matching records found.")
-            else:
-                st.write(filtered_df)
 
 if __name__ == "__main__":
     pass
