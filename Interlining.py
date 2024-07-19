@@ -3,9 +3,12 @@ import pandas as pd
 import openpyxl 
 import os
 
-### Load data from Excel file
+# Load data from Excel file
 excel_file = 'Interlining_Data.xlsx'
 
+@st.cache_data
+def load_data(excel_file):
+    try:
         df = pd.read_excel(excel_file)
         df.columns = df.columns.str.strip()  # Trim spaces from column names
     except FileNotFoundError:
@@ -66,7 +69,7 @@ in_cuff = st.text_input("In cuff")
 top_sp = st.text_input("Top SP")
 inner_sp = st.text_input("Inner SP")
 label_patch = st.text_input("Label Patch")
-moon_patch = st.text_input("Moon patch")
+moon_patch = st.text_input("Moon Patch")
 welt = st.text_input("Welt")
 flap = st.text_input("Flap")
 
@@ -95,7 +98,7 @@ if st.button("Save Data"):
         'Top SP': top_sp,
         'Inner SP': inner_sp,
         'Label Patch': label_patch,
-        'Moon patch': moon_patch,
+        'Moon Patch': moon_patch,
         'Welt': welt,
         'Flap': flap
     }
@@ -106,15 +109,15 @@ st.header("Data Retrieval")
 with st.form("data_retrieval"):
     indent_number_retrieve = st.text_input("Indent Number")
     stage_retrieve = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                 "Quotation", "Sealer", "Size Set", "SMS"])
+                                            "Quotation", "Sealer", "Size Set", "SMS"])
     customer_retrieve = st.text_input("Customer")
     style_retrieve = st.text_input("Style")
     wash_retrieve = st.text_input("Wash")
     content_retrieve = st.text_input("Content")
     gsm_retrieve = st.text_input("GSM")
     structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                  "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                  "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
+                                                    "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
+                                                    "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
     type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 
     submitted = st.form_submit_button("Retrieve")
@@ -162,3 +165,4 @@ with st.form("data_retrieval"):
 
 if __name__ == "__main__":
     pass
+
