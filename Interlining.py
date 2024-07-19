@@ -7,7 +7,7 @@ import os
 excel_file = 'Interlining_Data.xlsx'
 
 @st.cache_data
-def load_data(excel_file):
+def load_data():
     try:
         df = pd.read_excel(excel_file)
         df.columns = df.columns.str.strip()  # Trim spaces from column names
@@ -20,11 +20,10 @@ def load_data(excel_file):
             "Inner SP", "Label Patch", "Moon Patch", "Welt", "Flap"
         ])
         df.to_excel(excel_file, index=False)
-    return df  # Return the DataFrame, not just "Data Loaded"
+    return df 
 
 # Function to save new data entry to the Excel file
-@st.cache_data
-def save_data(new_data, excel_file):
+def save_data(new_data):
     try:
         df = load_data(excel_file)  # Load existing data
         df.columns = df.columns.str.strip()  # Trim spaces from column names
@@ -102,7 +101,7 @@ if st.button("Save Data"):
         'Welt': welt,
         'Flap': flap
     }
-    save_data(new_data, excel_file)
+    save_data(new_data)
 
 # Data Retrieval section
 st.header("Data Retrieval")
@@ -141,7 +140,7 @@ with st.form("data_retrieval"):
         if type_of_construction_retrieve:
             filters["Type of construction"] = type_of_construction_retrieve
 
-        df = load_data(excel_file)  # Load data after filtering
+        df = load_data()  # Load data after filtering
         
         filtered_df = df
         for key, value in filters.items():
