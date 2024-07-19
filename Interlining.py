@@ -3,13 +3,10 @@ import pandas as pd
 import openpyxl 
 import os
 
-# Load data from Excel file
-file_path = "Interlining_Data.xlsx"
+### Load data from Excel file
+excel_file = 'Interlining_Data.xlsx'
 
-@st.cache_data
-def load_data(file_path):
-    try:
-        df = pd.read_excel(file_path)
+        df = pd.read_excel(excel_file)
         df.columns = df.columns.str.strip()  # Trim spaces from column names
     except FileNotFoundError:
         df = pd.DataFrame(columns=[
@@ -19,18 +16,18 @@ def load_data(file_path):
             "Outer NB", "CF T P", "CF D P", "Top Cuff", "In cuff", "Top SP",
             "Inner SP", "Label Patch", "Moon Patch", "Welt", "Flap"
         ])
-        df.to_excel(file_path, index=False)
+        df.to_excel(excel_file, index=False)
     return df  # Return the DataFrame, not just "Data Loaded"
 
 # Function to save new data entry to the Excel file
 @st.cache_data
-def save_data(new_data, file_path):
+def save_data(new_data, excel_file):
     try:
-        df = load_data(file_path)  # Load existing data
+        df = load_data(excel_file)  # Load existing data
         df.columns = df.columns.str.strip()  # Trim spaces from column names
         # Concatenate the new data with the existing DataFrame
         df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-        df.to_excel(file_path, index=False)  # Save to Excel
+        df.to_excel(excel_file, index=False)  # Save to Excel
         st.success("Data saved successfully!")
     except PermissionError:
         st.error("Permission denied: Ensure the file is not open.")
@@ -102,7 +99,7 @@ if st.button("Save Data"):
         'Welt': welt,
         'Flap': flap
     }
-    save_data(new_data, file_path)
+    save_data(new_data, excel_file)
 
 # Data Retrieval section
 st.header("Data Retrieval")
@@ -141,7 +138,7 @@ with st.form("data_retrieval"):
         if type_of_construction_retrieve:
             filters["Type of construction"] = type_of_construction_retrieve
 
-        df = load_data(file_path)  # Load data after filtering
+        df = load_data(excel_file)  # Load data after filtering
         
         filtered_df = df
         for key, value in filters.items():
