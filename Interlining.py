@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import openpyxl 
+import openpyxl
 import os
 
 # Load data from Excel file
@@ -20,17 +20,49 @@ def load_data():
             "Inner SP", "Label Patch", "Moon Patch", "Welt", "Flap"
         ])
         df.to_excel(excel_file, index=False)
-    return df 
+    return df
 
 # Function to save new data entry to the Excel file
 def save_data(new_data):
     try:
-        df = load_data(excel_file)  # Load existing data
+        df = load_data()  # Load existing data
         df.columns = df.columns.str.strip()  # Trim spaces from column names
-        # Concatenate the new data with the existing DataFrame
-        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-        df.to_excel(excel_file, index=False)  # Save to Excel
-        st.success("Data saved successfully!")
+
+        # Check if the data already exists
+        duplicate = df[(df["Indent Number"] == new_data["Indent Number"]) & 
+                       (df["Stage"] == new_data["Stage"]) & 
+                       (df["Customer"] == new_data["Customer"]) & 
+                       (df["Style"] == new_data["Style"]) & 
+                       (df["Wash"] == new_data["Wash"]) & 
+                       (df["Content"] == new_data["Content"]) & 
+                       (df["GSM"] == new_data["GSM"]) & 
+                       (df["Structure"] == new_data["Structure"]) & 
+                       (df["Count_Cons"] == new_data["Count_Cons"]) & 
+                       (df["Type of construction"] == new_data["Type of construction"]) & 
+                       (df["Collar Skin"] == new_data["Collar Skin"]) & 
+                       (df["Collar Patch"] == new_data["Collar Patch"]) & 
+                       (df["Inner Collar"] == new_data["Inner Collar"]) & 
+                       (df["Inner NB"] == new_data["Inner NB"]) & 
+                       (df["NB Patch"] == new_data["NB Patch"]) & 
+                       (df["Outer NB"] == new_data["Outer NB"]) & 
+                       (df["CF T P"] == new_data["CF T P"]) & 
+                       (df["CF D P"] == new_data["CF D P"]) & 
+                       (df["Top Cuff"] == new_data["Top Cuff"]) & 
+                       (df["In cuff"] == new_data["In cuff"]) & 
+                       (df["Top SP"] == new_data["Top SP"]) & 
+                       (df["Inner SP"] == new_data["Inner SP"]) & 
+                       (df["Label Patch"] == new_data["Label Patch"]) & 
+                       (df["Moon Patch"] == new_data["Moon Patch"]) & 
+                       (df["Welt"] == new_data["Welt"]) & 
+                       (df["Flap"] == new_data["Flap"])]
+        
+        if not duplicate.empty:
+            st.warning("Data already saved!")
+        else:
+            # Concatenate the new data with the existing DataFrame
+            df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
+            df.to_excel(excel_file, index=False)  # Save to Excel
+            st.success("Data saved successfully!")
     except PermissionError:
         st.error("Permission denied: Ensure the file is not open.")
     except Exception as e:
@@ -44,15 +76,15 @@ st.title("Data Entry")
 
 indent_number = st.number_input("Indent Number", min_value=9999)
 stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                 "Quotation", "Sealer", "Size Set", "SMS"])
+                               "Quotation", "Sealer", "Size Set", "SMS"])
 customer = st.text_input("Customer")
 style = st.text_input("Style")
 wash = st.text_input("Wash")
 content = st.text_input("Content")
 gsm = st.number_input("GSM", min_value=9)
 structure = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                  "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                  "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
+                                       "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
+                                       "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
 count_cons = st.text_input("Count_Cons")
 type_of_construction = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 collar_skin = st.text_input("Collar Skin")
@@ -164,4 +196,3 @@ with st.form("data_retrieval"):
 
 if __name__ == "__main__":
     pass
-
