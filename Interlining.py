@@ -55,7 +55,7 @@ def save_data(new_data):
                        (df["Moon Patch"] == new_data["Moon Patch"]) & 
                        (df["Welt"] == new_data["Welt"]) & 
                        (df["Flap"] == new_data["Flap"])]
-        
+
         if not duplicate.empty:
             st.warning("Data already saved!")
         else:
@@ -160,7 +160,7 @@ elif app_mode == "Data Retrieval":
         if submitted:
             filters = {}
             if indent_number_retrieve:
-                filters["Indent Number"] = indent_number_retrieve
+                filters["Indent Number"] = int(indent_number_retrieve)
             if customer_retrieve:
                 filters["Customer"] = customer_retrieve
             if style_retrieve:
@@ -170,7 +170,7 @@ elif app_mode == "Data Retrieval":
             if content_retrieve:
                 filters["Content"] = content_retrieve
             if gsm_retrieve:
-                filters["GSM"] = gsm_retrieve
+                filters["GSM"] = int(gsm_retrieve) if gsm_retrieve else None
             if structure_retrieve:
                 filters["Structure"] = structure_retrieve
             if type_of_construction_retrieve:
@@ -182,10 +182,7 @@ elif app_mode == "Data Retrieval":
             for key, value in filters.items():
                 if value:
                     try:
-                        if key in ['Indent Number', 'GSM']:  # Check if key is in the list
-                            filtered_df = filtered_df.loc[filtered_df[key] == int(value)]
-                        else:
-                            filtered_df = filtered_df.loc[filtered_df[key] == value]
+                        filtered_df = filtered_df[filtered_df[key] == value]
                     except ValueError as ve:
                         st.error(f"ValueError: {ve}")
                     except KeyError as ke:
