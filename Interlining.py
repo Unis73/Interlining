@@ -26,13 +26,17 @@ def load_data():
 def save_data(new_data):
     df = load_data()
     df.columns = df.columns.str.strip()  # Trim spaces from column names
+
+    # Convert new_data to a DataFrame
+    new_data_df = pd.DataFrame([new_data])
     
     # Check for duplicate entry
-    is_duplicate = df.isin(new_data).all(axis=1).any()
+    is_duplicate = df.equals(pd.concat([df, new_data_df], ignore_index=True).drop_duplicates(keep=False))
+
     if is_duplicate:
         st.warning("Data already exists.")
     else:
-        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
+        df = pd.concat([df, new_data_df], ignore_index=True)
         df.to_excel(excel_file, index=False)
         st.success("Data saved successfully!")
         
