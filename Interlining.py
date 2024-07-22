@@ -50,8 +50,8 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-st.sidebar.title("Navigation")
-app_mode = st.sidebar.radio("Go to", ["Data Entry", "Data Retrieval"])
+st.sidebar.title("Forms")
+app_mode = st.sidebar.radio("Choose the form", ["Data Entry", "Data Retrieval"])
 
 if app_mode == "Data Entry":
     st.title("Data Entry")
