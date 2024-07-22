@@ -3,15 +3,15 @@ import pandas as pd
 import openpyxl
 import os
 
-# Path to the Excel file
-excel_file = '/mnt/data/Interlining_Data.xlsx'
+# Load data from Excel file
+excel_file = 'Interlining_Data.xlsx'
 
 @st.cache_data
 def load_data():
-    if os.path.exists(excel_file):
+    try:
         df = pd.read_excel(excel_file)
         df.columns = df.columns.str.strip()  # Trim spaces from column names
-    else:
+    except FileNotFoundError:
         df = pd.DataFrame(columns=[
             "Indent Number", "Stage", "Customer", "Style", "Wash",
             "Content", "GSM", "Structure", "Count_Cons", "Type of construction",
@@ -22,51 +22,73 @@ def load_data():
         df.to_excel(excel_file, index=False)
     return df
 
-@st.cache_data
+# Function to save new data entry to the Excel file
 def save_data(new_data):
-    df = load_data()
-    df.columns = df.columns.str.strip()  # Trim spaces from column names
-    
-    # Check for duplicate entry
-    is_duplicate = df.isin(new_data).all(axis=1).any()
-    if is_duplicate:
-        st.warning("Data already exists.")
-    else:
-        df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
-        df.to_excel(excel_file, index=False)
-        st.success("Data saved successfully!")
-        
-# Custom CSS to hide specific Streamlit elements
-hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .css-1outpf7.e1fqkh3o1 {display: none;}  /* Hide sidebar expand/collapse button */
-    .css-12ttj6m.e1fqkh3o3 {display: none;}  /* Hide 'view all apps' icon */
-    .css-1de8c82.e1fqkh3o2 {display: none;}  /* Hide 'record a screencast' icon */
-    .css-1rs6os.edgvbvh9 {display: none;}  /* Hide 'developer options' icon */
-    </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+    try:
+        df = load_data()  # Load existing data
+        df.columns = df.columns.str.strip()  # Trim spaces from column names
 
-st.sidebar.title("Forms")
-app_mode = st.sidebar.radio("Choose the form", ["Data Entry", "Data Retrieval"])
+        # Check if the data already exists
+        duplicate = df[(df["Indent Number"] == new_data["Indent Number"]) & 
+                       (df["Stage"] == new_data["Stage"]) & 
+                       (df["Customer"] == new_data["Customer"]) & 
+                       (df["Style"] == new_data["Style"]) & 
+                       (df["Wash"] == new_data["Wash"]) & 
+                       (df["Content"] == new_data["Content"]) & 
+                       (df["GSM"] == new_data["GSM"]) & 
+                       (df["Structure"] == new_data["Structure"]) & 
+                       (df["Count_Cons"] == new_data["Count_Cons"]) & 
+                       (df["Type of construction"] == new_data["Type of construction"]) & 
+                       (df["Collar Skin"] == new_data["Collar Skin"]) & 
+                       (df["Collar Patch"] == new_data["Collar Patch"]) & 
+                       (df["Inner Collar"] == new_data["Inner Collar"]) & 
+                       (df["Inner NB"] == new_data["Inner NB"]) & 
+                       (df["NB Patch"] == new_data["NB Patch"]) & 
+                       (df["Outer NB"] == new_data["Outer NB"]) & 
+                       (df["CF T P"] == new_data["CF T P"]) & 
+                       (df["CF D P"] == new_data["CF D P"]) & 
+                       (df["Top Cuff"] == new_data["Top Cuff"]) & 
+                       (df["In cuff"] == new_data["In cuff"]) & 
+                       (df["Top SP"] == new_data["Top SP"]) & 
+                       (df["Inner SP"] == new_data["Inner SP"]) & 
+                       (df["Label Patch"] == new_data["Label Patch"]) & 
+                       (df["Moon Patch"] == new_data["Moon Patch"]) & 
+                       (df["Welt"] == new_data["Welt"]) & 
+                       (df["Flap"] == new_data["Flap"])]
+
+        if not duplicate.empty:
+            st.warning("Data already saved!")
+        else:
+            # Concatenate the new data with the existing DataFrame
+            df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
+            df.to_excel(excel_file, index=False)  # Save to Excel
+            st.success("Data saved successfully!")
+    except PermissionError:
+        st.error("Permission denied: Ensure the file is not open.")
+    except Exception as e:
+        st.error(f"Error saving data: {e}")
+
+# Create Streamlit app
+st.title("Data Entry and Retrieval Dashboard")
+
+# Sidebar navigation
+st.sidebar.title("Navigation")
+app_mode = st.sidebar.radio("Choose the mode", ["Data Entry", "Data Retrieval"])
 
 if app_mode == "Data Entry":
-    st.title("Data Entry")
+    st.header("Data Entry")
 
     indent_number = st.number_input("Indent Number", min_value=9999)
     stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                     "Quotation", "Sealer", "Size Set", "SMS"])
+                                   "Quotation", "Sealer", "Size Set", "SMS"])
     customer = st.text_input("Customer")
     style = st.text_input("Style")
     wash = st.text_input("Wash")
     content = st.text_input("Content")
     gsm = st.number_input("GSM", min_value=9)
     structure = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                      "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                      "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
+                                           "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
+                                           "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
     count_cons = st.text_input("Count_Cons")
     type_of_construction = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
     collar_skin = st.text_input("Collar Skin")
@@ -117,20 +139,20 @@ if app_mode == "Data Entry":
         }
         save_data(new_data)
 
-if app_mode == "Data Retrieval":
-    st.title("Data Retrieval")
+elif app_mode == "Data Retrieval":
+    st.header("Data Retrieval")
     with st.form("data_retrieval"):
         indent_number_retrieve = st.text_input("Indent Number")
         stage_retrieve = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                     "Quotation", "Sealer", "Size Set", "SMS"])
+                                                "Quotation", "Sealer", "Size Set", "SMS"])
         customer_retrieve = st.text_input("Customer")
         style_retrieve = st.text_input("Style")
         wash_retrieve = st.text_input("Wash")
         content_retrieve = st.text_input("Content")
         gsm_retrieve = st.text_input("GSM")
         structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                      "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                      "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
+                                                        "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
+                                                        "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
         type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
 
         submitted = st.form_submit_button("Retrieve")
@@ -138,7 +160,7 @@ if app_mode == "Data Retrieval":
         if submitted:
             filters = {}
             if indent_number_retrieve:
-                filters["Indent Number"] = indent_number_retrieve
+                filters["Indent Number"] = int(indent_number_retrieve)
             if customer_retrieve:
                 filters["Customer"] = customer_retrieve
             if style_retrieve:
@@ -148,7 +170,7 @@ if app_mode == "Data Retrieval":
             if content_retrieve:
                 filters["Content"] = content_retrieve
             if gsm_retrieve:
-                filters["GSM"] = gsm_retrieve
+                filters["GSM"] = int(gsm_retrieve) if gsm_retrieve else None
             if structure_retrieve:
                 filters["Structure"] = structure_retrieve
             if type_of_construction_retrieve:
