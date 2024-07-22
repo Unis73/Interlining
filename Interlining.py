@@ -4,7 +4,7 @@ import openpyxl
 import os
 
 # Path to the Excel file
-excel_file = '/mnt/data/Interlining_Data.xlsx'
+excel_file = "C:\Users\Dell\OneDrive\Desktop\interliningFolder\Interlining Data.xlsx"
 
 @st.cache_data
 def load_data():
@@ -35,7 +35,7 @@ def save_data(new_data):
         df = pd.concat([df, pd.DataFrame([new_data])], ignore_index=True)
         df.to_excel(excel_file, index=False)
         st.success("Data saved successfully!")
-        
+
 # Custom CSS to hide specific Streamlit elements
 hide_streamlit_style = """
     <style>
@@ -50,8 +50,8 @@ hide_streamlit_style = """
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-st.sidebar.title("Forms")
-app_mode = st.sidebar.radio("Choose the form", ["Data Entry", "Data Retrieval"])
+st.sidebar.title("Navigation")
+app_mode = st.sidebar.radio("Go to", ["Data Entry", "Data Retrieval"])
 
 if app_mode == "Data Entry":
     st.title("Data Entry")
