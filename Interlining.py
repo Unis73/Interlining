@@ -1,181 +1,175 @@
 import streamlit as st
 import pandas as pd
 import openpyxl
-import os
+import tempfile
+import io
 
-# Path to the Excel file
-excel_file = 'Interlining_Data.xlsx'
-
+# Function to load Excel data
 @st.cache_data
-def load_data():
-    if os.path.exists(excel_file):
-        df = pd.read_excel(excel_file)
-        df.columns = df.columns.str.strip()  # Trim spaces from column names
-    else:
-        df = pd.DataFrame(columns=[
-            "Indent Number", "Stage", "Customer", "Style", "Wash",
-            "Content", "GSM", "Structure", "Count_Cons", "Type of construction",
-            "Collar Skin", "Collar Patch", "Inner Collar", "Inner NB", "NB Patch",
-            "Outer NB", "CF T P", "CF D P", "Top Cuff", "In cuff", "Top SP",
-            "Inner SP", "Label Patch", "Moon Patch", "Welt", "Flap"
-        ])
-        df.to_excel(excel_file, index=False)
+def load_data(file_path):
+    df = pd.read_excel(file_path)
     return df
 
-@st.cache_data
-def save_data(new_data):
-    df = load_data()
-    df.columns = df.columns.str.strip()  # Trim spaces from column names
+# Function to save data back to Excel
+def save_data(data, file_path):
+    data.to_excel(file_path, index=False)
 
-    # Convert new_data to a DataFrame
-    new_data_df = pd.DataFrame([new_data])
-    
-    # Check for duplicate entry
-    is_duplicate = df.equals(pd.concat([df, new_data_df], ignore_index=True).drop_duplicates(keep=False))
+# Function to clean data
+def clean_data(df):
+    df = df.fillna('NA').astype(str)
+    return df
 
-    if is_duplicate:
-        st.warning("Data already exists.")
-    else:
-        df = pd.concat([df, new_data_df], ignore_index=True)
-        df.to_excel(excel_file, index=False)
-        st.success("Data saved successfully!")
-        
-# Custom CSS to hide specific Streamlit elements
-hide_streamlit_style = """
-    <style>
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    .css-1outpf7.e1fqkh3o1 {display: none;}  /* Hide sidebar expand/collapse button */
-    .css-12ttj6m.e1fqkh3o3 {display: none;}  /* Hide 'view all apps' icon */
-    .css-1de8c82.e1fqkh3o2 {display: none;}  /* Hide 'record a screencast' icon */
-    .css-1rs6os.edgvbvh9 {display: none;}  /* Hide 'developer options' icon */
-    </style>
-"""
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+def is_pure_text_column(series):
+    return series.apply(lambda x: isinstance(x, str) and not any(char.isdigit() for char in x)).all()
 
-st.sidebar.title("Forms")
-app_mode = st.sidebar.radio("Choose the form", ["Data Entry", "Data Retrieval"])
+def main():
+    st.title("EXCEL FORMS")
 
-if app_mode == "Data Entry":
-    st.title("Data Entry")
+    # Hide specific Streamlit style elements
+    hide_streamlit_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        header {visibility: hidden;}
+        .css-18ni7ap.e8zbici2 {visibility: hidden;} /* Hide the Streamlit menu icon */
+        .css-1v0mbdj.e8zbici1 {visibility: visible;} /* Keep the settings icon */
+        </style>
+    """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-    indent_number = st.number_input("Indent Number", min_value=9999)
-    stage = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                     "Quotation", "Sealer", "Size Set", "SMS"])
-    customer = st.text_input("Customer")
-    style = st.text_input("Style")
-    wash = st.text_input("Wash")
-    content = st.text_input("Content")
-    gsm = st.number_input("GSM", min_value=9)
-    structure = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                      "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                      "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
-    count_cons = st.text_input("Count_Cons")
-    type_of_construction = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
-    collar_skin = st.text_input("Collar Skin")
-    collar_patch = st.text_input("Collar Patch")
-    inner_collar = st.text_input("Inner Collar")
-    inner_nb = st.text_input("Inner NB")
-    nb_patch = st.text_input("NB Patch")
-    outer_nb = st.text_input("Outer NB")
-    cf_t_p = st.text_input("CF T P")
-    cf_d_p = st.text_input("CF D P")
-    top_cuff = st.text_input("Top Cuff")
-    in_cuff = st.text_input("In cuff")
-    top_sp = st.text_input("Top SP")
-    inner_sp = st.text_input("Inner SP")
-    label_patch = st.text_input("Label Patch")
-    moon_patch = st.text_input("Moon Patch")
-    welt = st.text_input("Welt")
-    flap = st.text_input("Flap")
+    # Sidebar for file upload and data entry
+    st.sidebar.title('Data Entry')
+    st.sidebar.warning("Ensure the first column contains unique values.")
+    uploaded_file = st.file_uploader("Choose an Excel file", type="xlsx")
 
-    if st.button("Save Data"):
-        new_data = {
-            'Indent Number': indent_number,
-            'Stage': stage,
-            'Customer': customer,
-            'Style': style,
-            'Wash': wash,
-            'Content': content,
-            'GSM': gsm,
-            'Structure': structure,
-            'Count_Cons': count_cons,
-            'Type of construction': type_of_construction,
-            'Collar Skin': collar_skin,
-            'Collar Patch': collar_patch,
-            'Inner Collar': inner_collar,
-            'Inner NB': inner_nb,
-            'NB Patch': nb_patch,
-            'Outer NB': outer_nb,
-            'CF T P': cf_t_p,
-            'CF D P': cf_d_p,
-            'Top Cuff': top_cuff,
-            'In cuff': in_cuff,
-            'Top SP': top_sp,
-            'Inner SP': inner_sp,
-            'Label Patch': label_patch,
-            'Moon Patch': moon_patch,
-            'Welt': welt,
-            'Flap': flap
-        }
-        save_data(new_data)
+    if uploaded_file is not None:
+        # Check if a new file is uploaded
+        if 'uploaded_file' in st.session_state and st.session_state.uploaded_file != uploaded_file:
+            # Clear session state to reset the app if a new file is uploaded
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.experimental_rerun()
 
-if app_mode == "Data Retrieval":
-    st.title("Data Retrieval")
-    with st.form("data_retrieval"):
-        indent_number_retrieve = st.text_input("Indent Number")
-        stage_retrieve = st.selectbox("Stage", [" ", "Design", "Development", "FIT", "GFE", "GPT", "GPT,PP", "Mock", "Offer", "Photoshoot", "Pre-Production", "Proto",
-                     "Quotation", "Sealer", "Size Set", "SMS"])
-        customer_retrieve = st.text_input("Customer")
-        style_retrieve = st.text_input("Style")
-        wash_retrieve = st.text_input("Wash")
-        content_retrieve = st.text_input("Content")
-        gsm_retrieve = st.text_input("GSM")
-        structure_retrieve = st.selectbox("Structure", [" ", "Corduroy", "Dobby", "Denim", "French Terry", "Herringbone", "Interlock (Knit)", "Jersey",
-                                                      "Jacquard", "Knit", "Matt", "Miss Jersey Knit", "Oxford", "Oxford Twill",
-                                                      "Pique", "Plain", "Poplin", "Satin", "Seersucker", "Single Jersey", "Twill", "Twill Knit"])
-        type_of_construction_retrieve = st.selectbox("Type of construction", [" ", "Woven", "Knit"])
+        if 'original_file_path' not in st.session_state:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as temp_file:
+                temp_file.write(uploaded_file.getbuffer())
+                st.session_state.original_file_path = temp_file.name
+                st.session_state.uploaded_file = uploaded_file
 
-        submitted = st.form_submit_button("Retrieve")
+        if 'df' not in st.session_state:
+            df = load_data(st.session_state.original_file_path)
+            df = clean_data(df)
+            st.session_state.df = df
+        else:
+            df = st.session_state.df
 
-        if submitted:
-            filters = {}
-            if indent_number_retrieve:
-                filters["Indent Number"] = indent_number_retrieve
-            if customer_retrieve:
-                filters["Customer"] = customer_retrieve
-            if style_retrieve:
-                filters["Style"] = style_retrieve
-            if wash_retrieve:
-                filters["Wash"] = wash_retrieve
-            if content_retrieve:
-                filters["Content"] = content_retrieve
-            if gsm_retrieve:
-                filters["GSM"] = gsm_retrieve
-            if structure_retrieve:
-                filters["Structure"] = structure_retrieve
-            if type_of_construction_retrieve:
-                filters["Type of construction"] = type_of_construction_retrieve
+        # Initialize form data if not present
+        if 'form_data' not in st.session_state:
+            st.session_state.form_data = {col: '' for col in df.columns}
 
-            df = load_data()  # Load data after filtering
+        # Sidebar form fields for adding new data
+        st.sidebar.header('Enter New Data')
 
-            filtered_df = df
-            for key, value in filters.items():
-                if value:
-                    try:
-                        filtered_df = filtered_df[filtered_df[key] == value]
-                    except ValueError as ve:
-                        st.error(f"ValueError: {ve}")
-                    except KeyError as ke:
-                        st.error(f"KeyError: {ke}")
-                    except Exception as e:
-                        st.error(f"Unexpected error: {e}")
-
-            if filtered_df.empty:
-                st.error("No matching records found.")
+        new_data = {}
+        for col in df.columns:
+            key = f"{col}_input"
+            if is_pure_text_column(df[col]):
+                unique_values = df[col].unique().tolist()
+                new_data[col] = st.sidebar.selectbox(
+                    f"Select or enter {col}",
+                    options=[""] + unique_values,
+                    key=key,
+                    index=unique_values.index(st.session_state.form_data.get(col, '')) if st.session_state.form_data.get(col, '') in unique_values else 0
+                )
             else:
-                st.write(filtered_df)
+                new_data[col] = st.sidebar.text_input(
+                    f"{col}",
+                    key=key,
+                    value=st.session_state.form_data.get(col, '')
+                )
+
+        # Sidebar button to add data
+        if st.sidebar.button('Add Data'):
+            new_data = {col: new_data[col] if new_data[col] != '' else 'NA' for col in df.columns}
+            new_data_df = pd.DataFrame([new_data])
+            
+            # Check for duplicate entries in the first column
+            first_col_name = df.columns[0]  # Assuming the first column should be unique
+            if new_data_df[first_col_name].values[0] in df[first_col_name].values:
+                st.error(f'The value "{new_data[first_col_name]}" already exists in the "{first_col_name}" column.')
+            else:
+                st.session_state.df = pd.concat([st.session_state.df, new_data_df], ignore_index=True)
+                st.session_state.df = clean_data(st.session_state.df)
+                # Save the updated data
+                save_data(st.session_state.df, st.session_state.original_file_path)
+                st.success('Data added successfully!')
+                # Clear the form fields after successful data addition
+                st.session_state.form_data = {col: '' for col in df.columns}
+                st.experimental_rerun()  # Refresh the sidebar and form fields
+
+        # Delete button to clear session state and refresh app
+        if st.sidebar.button('Clear All Data'):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.experimental_rerun()
+
+        # Create a download link for the updated data
+        if st.button('Download Updated Data'):
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as updated_file:
+                save_data(st.session_state.df, updated_file.name)
+                with open(updated_file.name, "rb") as file:
+                    st.download_button(
+                        label="Download Excel file",
+                        data=file,
+                        file_name="updated_data.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            st.success('Data downloaded successfully!')
+
+        # Filter and display data
+        st.header('Retrieve Data')
+        filter_cols = st.multiselect('Select columns for filter:', options=df.columns)
+
+        if filter_cols:
+            filter_values = {}
+            filtered_df = df.copy()  # Initialize filtered_df before filtering
+
+            # Show filter input fields based on selected columns
+            for col in filter_cols:
+                filter_value = st.text_input(f'Enter value to filter {col}:', key=col)
+                if filter_value:
+                    filter_values[col] = filter_value
+
+            # Apply filters and display filtered data
+            if filter_values:
+                for col, value in filter_values.items():
+                    try:
+                        filtered_df[col] = filtered_df[col].astype(float)  # Try to convert column to float
+                        value = float(value)
+                        filtered_df = filtered_df[filtered_df[col] == value]
+                    except ValueError:
+                        filtered_df = filtered_df[filtered_df[col].str.lower() == value.lower()]
+
+                if filtered_df.empty:
+                    st.warning('No matching records found.')
+                else:
+                    st.write('Filtered Data:')
+                    st.write(filtered_df)
+
+                    # Download filtered data
+                    if st.button('Download Filtered Data'):
+                        buffer = io.BytesIO()
+                        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+                            filtered_df.to_excel(writer, index=False, sheet_name='Filtered Data')
+                        buffer.seek(0)
+                        
+                        st.download_button(
+                            label="Download Excel file",
+                            data=buffer,
+                            file_name="filtered_data.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        )
+                        st.success('Filtered data downloaded successfully!')
 
 if __name__ == "__main__":
-    pass
+    main()
