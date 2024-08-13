@@ -23,7 +23,7 @@ def is_pure_text_column(series):
     return series.apply(lambda x: isinstance(x, str) and not any(char.isdigit() for char in x)).all()
 
 def main():
-    st.title("EXCEL FORMS")
+    st.title("LAGUNA INTERFACE")
 
     # Hide specific Streamlit style elements
     hide_streamlit_style = """
